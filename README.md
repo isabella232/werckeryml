@@ -15,7 +15,7 @@ parser.parse(raw, function(err, werckeryml) {
     console.log(err);
     return;
   }
-  console.dir
+  console.dir(werckeryml);
 });
 ```
 
