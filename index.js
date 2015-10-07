@@ -1,3 +1,5 @@
 'use strict';
 
-exports.parse = require('./parse');
+module.exports = {
+  parse: require('./parse'),
+};
