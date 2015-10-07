@@ -1,0 +1,23 @@
+{
+  "name": "werckeryml-parser",
+  "version": "1.0.0",
+  "description": "Parse a wercker.yml and return a normalized view",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test node test"
+  },
+  "repository": "wercker/werckeryml-parser",
+  "keywords": [
+    "wercker",
+    "wercker.yml",
+    "parser"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^2.10.2",
+    "js-yaml": "^3.4.2"
+  },
+  "devDependencies": {
+    "tape": "^4.2.1"
+  }
+}
