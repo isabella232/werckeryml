@@ -1,16 +1,10 @@
 'use strict';
 
-var bluebird = require('bluebird');
 var yaml = require('js-yaml');
 
-module.exports = function(input, options, cb) {
-  if (typeof options === "function") {
-    cb = options;
-    options = {};
-  }
-
+module.exports = function(input) {
   if (!input) {
-    return bluebird.resolve(null).nodeify(cb);
+    return null;
   }
 
   var parsed = null;
@@ -18,12 +12,12 @@ module.exports = function(input, options, cb) {
     parsed = yaml.safeLoad(input);
   } catch ( e ) {
       // TODO(bvdberg): wrap, instead of replacing error
-      return bluebird.resolve(new Error('Unable to parse yaml')).nodeify(cb);
+      throw new Error('Unable to parse yaml');
   }
 
   var normalized = normalizeRoot(parsed);
 
-  return bluebird.resolve(normalized).nodeify(cb);
+  return normalized;
 };
 
 var normalizeRoot = function(parsed) {

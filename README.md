@@ -10,19 +10,17 @@ var werckeryml = require('werckeryml');
 
 var raw = 'box: ubuntu';
 
-werckeryml.parse(raw, function(err, obj) {
-  if (err) {
-    console.log(err);
-    return;
-  }
+try {
+  var obj = werckeryml.parse(raw);
   console.dir(obj);
-});
+} catch (e) {
+    console.log(err);
+}
 ```
 
 ## API
 
-### parse(input, options, cb)
+### parse(input)
 
-`input` needs to be a string. Supports either a `cb` or a promise based
-pattern. Returns a normalized object model. `options` is currently empty.
-
+Takes a `wercker.yml` text representation and parses it into a normalized
+representation. `input` needs to be a string. 
