@@ -60,6 +60,10 @@ var shouldProcessExtraStepsKey = function(key) {
 // reservedRootKeys), and it will try to convert all non reserved keys to
 // pipelines. All pipelines will be stored in the pipelines property.
 var normalizeRoot = function(parsed) {
+  if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('root object should be an object');
+  }
+
   if (parsed.box) {
     parsed.box = normalizeBox(parsed.box);
   }
@@ -91,21 +95,29 @@ var normalizeBox = function(box) {
     };
   }
 
-  return box;
+  if (typeof box === 'object') {
+    return box;
+  }
+
+  throw new Error('box (or service item) should be object or string');
 };
 
 // normalizeServices takes an array of services, and runs them through
 // normalizeBox.
 var normalizeServices = function(services) {
-  return services.map(normalizeBox);
+  if (Array.isArray(services)) {
+    return services.map(normalizeBox);
+  }
+
+  throw new Error('services should be an array');
 };
 
 // normalizePipeline takes an pipeline object and normalizes any properties.
 // If any extra steps are present, then they will be moved in the extraSteps
 // property.
 var normalizePipeline = function(pipeline) {
-  if (!pipeline) {
-    return null;
+  if (typeof pipeline !== 'object' || Array.isArray(pipeline)) {
+    throw new Error('pipeline should be an object');
   }
 
   if (pipeline.box) {
@@ -134,6 +146,10 @@ var normalizePipeline = function(pipeline) {
 
 // normalizeSteps takes an array of steps, and runs them through normalizeStep.
 var normalizeSteps = function(steps) {
+  if (!Array.isArray(steps)) {
+    throw new Error('steps should be an array');
+  }
+
   return steps.map(normalizeStep);
 };
 
@@ -154,25 +170,28 @@ var normalizeStep = function(step) {
     };
   }
 
-  if (typeof step === 'object') {
+  if (typeof step === 'object' && !Array.isArray(step)) {
     var keys = Object.keys(step);
-    if (keys.length === 1 && typeof step[keys[0]] === 'object') {
-      var o = step[keys[0]];
-      o.id = keys[0];
-      return o;
-    }
-
-    if (keys.length > 1) {
+    if (keys.length === 1) {
+      var content = step[keys[0]];
+      if (typeof content === 'object' && !Array.isArray(content)) {
+        var o = content;
+        o.id = keys[0];
+        return o;
+      }
+    } else if (keys.length > 1) {
       var nullKeys = keys.filter(hasNullValue.bind(null, step));
       if (nullKeys.length === 1) {
         var id = nullKeys[0];
         step.id = id;
         delete step[id];
+        return step;
       }
+      throw new Error('only a single null value is supported');
     }
   }
 
-  return step;
+  throw new Error('step should be object or string');
 };
 
 // processPipelines takes a root object, and returns an array of normalized

@@ -84,11 +84,21 @@ test('should keep expanded services property', function(t) {
 test('should handle pipelines', function(t) {
   var input = '---\n' +
     'build:\n' +
-    'deploy:\n';
+    '  box: ubuntu\n' +
+    'deploy:\n' +
+    '  box: ubuntu\n';
   var expected = {
     pipelines: {
-      build: null,
-      deploy: null
+      build: {
+        box: {
+          id: 'ubuntu'
+        }
+      },
+      deploy: {
+        box: {
+          id: 'ubuntu'
+        }
+      }
     }
   };
 
@@ -344,5 +354,97 @@ test('should handle after steps in pipelines', function(t) {
 
   var w = werckeryml.parse(input);
   t.deepEqual(w, expected);
+  t.end();
+});
+
+test('should only support objects for root', function(t) {
+  var input = '---\n' +
+    '- item1\n' +
+    '- item2';
+  t.throws(werckeryml.parse.bind(null, input), /root object should be an object/);
+  t.end();
+});
+
+test('should only support strings and objects for box', function(t) {
+  var input = '---\n' +
+    'box: 1234\n';
+
+  t.throws(werckeryml.parse.bind(null, input), /box \(or service item\) should be object or string/);
+  t.end();
+});
+
+test('should only support an array for services', function(t) {
+  var input = '---\n' +
+    'services: 1234\n';
+
+  t.throws(werckeryml.parse.bind(null, input), /services should be an array/);
+  t.end();
+});
+
+test('should only support objects for pipelines', function(t) {
+  var input = '---\n' +
+    'build: 1234\n';
+
+  t.throws(werckeryml.parse.bind(null, input), /pipeline should be an object/);
+  t.end();
+});
+
+test('should only support objects for pipelines (not array)', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  - 1234';
+
+  t.throws(werckeryml.parse.bind(null, input), /pipeline should be an object/);
+  t.end();
+});
+
+test('should only support an array for steps', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps: 1234\n';
+
+  t.throws(werckeryml.parse.bind(null, input), /steps should be an array/);
+  t.end();
+});
+
+test('should only support strings or objects for step', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps:\n' +
+    '    - 123';
+
+  t.throws(werckeryml.parse.bind(null, input), /step should be object or string/);
+  t.end();
+});
+
+test('should only support strings or objects for step (not array)', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps:\n' +
+    '    - [ "foo", "bar" ]';
+
+  t.throws(werckeryml.parse.bind(null, input), /step should be object or string/);
+  t.end();
+});
+
+test('should only support strings or objects for step (not array as inner object)', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps:\n' +
+    '    - script:\n' +
+    '        - 123';
+
+  t.throws(werckeryml.parse.bind(null, input), /step should be object or string/);
+  t.end();
+});
+
+test('should only support a single null value for flat steps', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps:\n' +
+    '    - script:\n' +
+    '      key2:';
+
+  t.throws(werckeryml.parse.bind(null, input), /only a single null value is supported/);
   t.end();
 });
