@@ -98,6 +98,10 @@ var normalizePipeline = function(pipeline) {
     pipeline.steps = normalizeSteps(pipeline.steps);
   }
 
+  if (pipeline['after-steps']) {
+    pipeline['after-steps'] = normalizeSteps(pipeline['after-steps']);
+  }
+
   var extraSteps = processExtraSteps(pipeline);
   if (extraSteps) {
     pipeline.extraSteps = extraSteps;
@@ -161,7 +165,7 @@ var processExtraSteps = function(pipeline) {
   return null;
 };
 
-var reservedPipelineKeys = ['box', 'services', 'steps'];
+var reservedPipelineKeys = ['box', 'services', 'steps', 'after-steps'];
 var shouldProcessExtraStepsKey = function(key) {
   return reservedPipelineKeys.indexOf(key) === -1;
 };
