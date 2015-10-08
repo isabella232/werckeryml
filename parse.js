@@ -39,6 +39,7 @@ var normalizeRoot = function(parsed) {
   if (pipelines) {
     parsed.pipelines = pipelines;
   }
+
   return parsed;
 };
 
@@ -60,15 +61,13 @@ var processPipelines = function(parsed) {
   var pipelines = {};
   var hasPipelines = false;
 
-  Object.keys(parsed).forEach(function(key) {
-    if (skipKey(key)) {
-      return;
-    }
-
-    pipelines[key] = normalizePipeline(parsed[key]);
-    delete parsed[key];
-    hasPipelines = true;
-  });
+  Object.keys(parsed)
+    .filter(shouldProcessPipelineKey)
+    .forEach(function(key) {
+      pipelines[key] = normalizePipeline(parsed[key]);
+      delete parsed[key];
+      hasPipelines = true;
+    });
 
   if (hasPipelines) {
     return pipelines;
@@ -77,9 +76,9 @@ var processPipelines = function(parsed) {
   return null;
 };
 
-var reservedKeys = ['box', 'services', 'command-timeout', 'source-dir', 'no-response-timeout'];
-var skipKey = function(key) {
-  return reservedKeys.indexOf(key) !== -1;
+var reservedRootKeys = ['box', 'services', 'command-timeout', 'source-dir', 'no-response-timeout'];
+var shouldProcessPipelineKey = function(key) {
+  return reservedRootKeys.indexOf(key) === -1;
 };
 
 var normalizePipeline = function(pipeline) {
@@ -97,6 +96,11 @@ var normalizePipeline = function(pipeline) {
 
   if (pipeline.steps) {
     pipeline.steps = normalizeSteps(pipeline.steps);
+  }
+
+  var extraSteps = processExtraSteps(pipeline);
+  if (extraSteps) {
+    pipeline.extraSteps = extraSteps;
   }
 
   return pipeline;
@@ -136,4 +140,28 @@ var normalizeStep = function(step) {
 
 var hasNullValue = function(o, key) {
   return o[key] === null;
+};
+
+var processExtraSteps = function(pipeline) {
+  var extraSteps = {};
+  var hasExtraSteps = false;
+
+  Object.keys(pipeline)
+    .filter(shouldProcessExtraStepsKey)
+    .forEach(function(key) {
+      extraSteps[key] = normalizeSteps(pipeline[key]);
+      delete pipeline[key];
+      hasExtraSteps = true;
+    });
+
+  if (hasExtraSteps) {
+    return extraSteps;
+  }
+
+  return null;
+};
+
+var reservedPipelineKeys = ['box', 'services', 'steps'];
+var shouldProcessExtraStepsKey = function(key) {
+  return reservedPipelineKeys.indexOf(key) === -1;
 };
