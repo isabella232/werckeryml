@@ -1,10 +1,10 @@
 'use strict';
 
-var parser = require('./');
+var werckeryml = require('./');
 var test = require('tape');
 
 test('should return null on empty input', function(t) {
-  parser.parse('', function(err, w) {
+  werckeryml.parse('', function(err, w) {
     t.error(err);
     t.equal(w, null);
     t.end();
@@ -20,7 +20,7 @@ test('should expand box property', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -37,7 +37,7 @@ test('should keep expanded box property', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -56,7 +56,7 @@ test('should expand services property', function(t) {
     ]
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -75,7 +75,7 @@ test('should keep expanded services property', function(t) {
     ]
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -93,7 +93,7 @@ test('should handle pipelines', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -122,7 +122,7 @@ test('should handle box in pipelines', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -158,7 +158,7 @@ test('should handle services in pipelines', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -198,7 +198,7 @@ test('should handle steps in pipelines', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -227,7 +227,7 @@ test('should not process reserved keys as pipelines', function(t) {
     'source-dir': 'src',
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -292,7 +292,7 @@ test('should handle extra steps in pipelines', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();
@@ -355,7 +355,7 @@ test('should handle after steps in pipelines', function(t) {
     }
   };
 
-  parser.parse(input, function(err, w) {
+  werckeryml.parse(input, function(err, w) {
     t.error(err);
     t.deepEqual(w, expected);
     t.end();

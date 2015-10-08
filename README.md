@@ -1,21 +1,21 @@
-# werckeryml-parser
+# werckeryml
 
-A wercker.yml parser. This will parse a input string to a normalized object
-model.
+A wercker.yml parser and dumper. This will parse a input string to a
+normalized object model.
 
 ## Usage
 
 ```javascript
-var parser = require('werckeryml-parser');
+var werckeryml = require('werckeryml');
 
 var raw = 'box: ubuntu';
 
-parser.parse(raw, function(err, werckeryml) {
+werckeryml.parse(raw, function(err, obj) {
   if (err) {
     console.log(err);
     return;
   }
-  console.dir(werckeryml);
+  console.dir(obj);
 });
 ```
 
