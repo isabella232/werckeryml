@@ -168,7 +168,7 @@ test('should handle services in pipelines', function(t) {
 test('should handle steps in pipelines', function(t) {
   var input = '---\n' +
     'build:\n' +
-    '  steps: \n' +
+    '  steps:\n' +
     '    - npm-install\n' +
     '    - script:\n' +
     '      name: echo foo\n' +
@@ -225,6 +225,71 @@ test('should not process reserved keys as pipelines', function(t) {
     'command-timeout': 60,
     'no-response-timeout': 60,
     'source-dir': 'src',
+  };
+
+  parser.parse(input, function(err, w) {
+    t.error(err);
+    t.deepEqual(w, expected);
+    t.end();
+  });
+});
+
+test('should handle extra steps in pipelines', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps:\n' +
+    '    - npm-install\n' +
+    '    - script:\n' +
+    '      name: echo foo\n' +
+    '      code: echo foo\n' +
+    '    - script:\n' +
+    '        name: echo bar\n' +
+    '        code: echo bar\n' +
+    '  custom-section:\n' +
+    '    - npm-install\n' +
+    '    - script:\n' +
+    '      name: echo foo\n' +
+    '      code: echo foo\n' +
+    '    - script:\n' +
+    '        name: echo bar\n' +
+    '        code: echo bar';
+  var expected = {
+    pipelines: {
+      build: {
+        steps: [
+            {
+              id: 'npm-install',
+            },
+            {
+              id: 'script',
+              name: 'echo foo',
+              code: 'echo foo',
+            },
+            {
+              id: 'script',
+              name: 'echo bar',
+              code: 'echo bar',
+            },
+          ],
+        extraSteps: {
+          'custom-section': [
+            {
+              id: 'npm-install',
+            },
+            {
+              id: 'script',
+              name: 'echo foo',
+              code: 'echo foo',
+            },
+            {
+              id: 'script',
+              name: 'echo bar',
+              code: 'echo bar',
+            },
+          ],
+        },
+      }
+    }
   };
 
   parser.parse(input, function(err, w) {
