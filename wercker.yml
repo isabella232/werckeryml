@@ -1,5 +1,6 @@
 box: node
 build: 
     steps: 
+        - jshint
         - npm-install
         - npm-test
