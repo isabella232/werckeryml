@@ -257,20 +257,20 @@ test('should handle extra steps in pipelines', function(t) {
     pipelines: {
       build: {
         steps: [
-            {
-              id: 'npm-install',
-            },
-            {
-              id: 'script',
-              name: 'echo foo',
-              code: 'echo foo',
-            },
-            {
-              id: 'script',
-              name: 'echo bar',
-              code: 'echo bar',
-            },
-          ],
+          {
+            id: 'npm-install',
+          },
+          {
+            id: 'script',
+            name: 'echo foo',
+            code: 'echo foo',
+          },
+          {
+            id: 'script',
+            name: 'echo bar',
+            code: 'echo bar',
+          },
+        ],
         extraSteps: {
           'custom-section': [
             {
@@ -289,6 +289,69 @@ test('should handle extra steps in pipelines', function(t) {
           ],
         },
       }
+    }
+  };
+
+  parser.parse(input, function(err, w) {
+    t.error(err);
+    t.deepEqual(w, expected);
+    t.end();
+  });
+});
+
+test('should handle after steps in pipelines', function(t) {
+  var input = '---\n' +
+    'build:\n' +
+    '  steps:\n' +
+    '    - npm-install\n' +
+    '    - script:\n' +
+    '      name: echo foo\n' +
+    '      code: echo foo\n' +
+    '    - script:\n' +
+    '        name: echo bar\n' +
+    '        code: echo bar\n' +
+    '  after-steps:\n' +
+    '    - npm-install\n' +
+    '    - script:\n' +
+    '      name: echo foo\n' +
+    '      code: echo foo\n' +
+    '    - script:\n' +
+    '        name: echo bar\n' +
+    '        code: echo bar';
+  var expected = {
+    pipelines: {
+      build: {
+        steps: [
+          {
+            id: 'npm-install',
+          },
+          {
+            id: 'script',
+            name: 'echo foo',
+            code: 'echo foo',
+          },
+          {
+            id: 'script',
+            name: 'echo bar',
+            code: 'echo bar',
+          },
+        ],
+        'after-steps': [
+          {
+            id: 'npm-install',
+          },
+          {
+            id: 'script',
+            name: 'echo foo',
+            code: 'echo foo',
+          },
+          {
+            id: 'script',
+            name: 'echo bar',
+            code: 'echo bar',
+          },
+        ],
+      },
     }
   };
 
