@@ -4,3 +4,12 @@ build:
         - jshint
         - npm-install
         - npm-test
+deploy:
+    npm-publish:
+        - script:
+            name: npm publish
+            code: |
+                echo "//registry.npmjs.org/:_authToken=${NPM_API_KEY}" >> $HOME/.npmrc
+                npm whoami
+                npm publish .
+    #github-release:
